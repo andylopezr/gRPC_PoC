@@ -14,7 +14,7 @@ class FileServicer(service_pb2_grpc.FileServiceServicer):
     
     def SayHello(self, request, context):
         message = f"Hello, {request.name}!"
-        return service_pb2.HelloResponse(message=message)
+        return service_pb2.HelloReply(message=message)
     
     def GetServerTime(self, request, context):
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
