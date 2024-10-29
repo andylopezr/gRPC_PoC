@@ -41,7 +41,7 @@ The PoC implements the following RPC methods:
 
 The `service.proto` file defines the service interface using Protocol Buffers. Key message types include:
 
-- `HelloRequest/HelloResponse`: For basic greeting service
+- `HelloRequest/HelloReply`: For basic greeting service
 - `Empty`: For requests that don't need parameters
 - `TimeResponse`: For server time responses
 - `FileRequest`: Contains filename and file content

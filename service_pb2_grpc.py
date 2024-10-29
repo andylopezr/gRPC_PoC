@@ -37,7 +37,7 @@ class FileServiceStub(object):
         self.SayHello = channel.unary_unary(
                 '/example.FileService/SayHello',
                 request_serializer=service__pb2.HelloRequest.SerializeToString,
-                response_deserializer=service__pb2.HelloResponse.FromString,
+                response_deserializer=service__pb2.HelloReply.FromString,
                 _registered_method=True)
         self.GetServerTime = channel.unary_unary(
                 '/example.FileService/GetServerTime',
@@ -89,7 +89,7 @@ def add_FileServiceServicer_to_server(servicer, server):
             'SayHello': grpc.unary_unary_rpc_method_handler(
                     servicer.SayHello,
                     request_deserializer=service__pb2.HelloRequest.FromString,
-                    response_serializer=service__pb2.HelloResponse.SerializeToString,
+                    response_serializer=service__pb2.HelloReply.SerializeToString,
             ),
             'GetServerTime': grpc.unary_unary_rpc_method_handler(
                     servicer.GetServerTime,
@@ -133,7 +133,7 @@ class FileService(object):
             target,
             '/example.FileService/SayHello',
             service__pb2.HelloRequest.SerializeToString,
-            service__pb2.HelloResponse.FromString,
+            service__pb2.HelloReply.FromString,
             options,
             channel_credentials,
             insecure,

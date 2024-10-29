@@ -3,7 +3,8 @@ syntax = "proto3";
 package example;
 
 service FileService {
-    rpc SayHello (HelloRequest) returns (HelloResponse) {}
+    // methods that can be called remotely
+    rpc SayHello (HelloRequest) returns (HelloReply) {}
     rpc GetServerTime (Empty) returns (TimeResponse) {}
     rpc WriteFile (FileRequest) returns (FileResponse) {}
     rpc GetFilesList (Empty) returns (FilesListResponse) {}
@@ -13,7 +14,7 @@ message HelloRequest {
     string name = 1;
 }
 
-message HelloResponse {
+message HelloReply {
     string message = 1;
 }
 
