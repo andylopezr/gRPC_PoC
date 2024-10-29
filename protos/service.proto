@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package example;
+
+service FileService {
+    rpc SayHello (HelloRequest) returns (HelloResponse) {}
+    rpc GetServerTime (Empty) returns (TimeResponse) {}
+    rpc WriteFile (FileRequest) returns (FileResponse) {}
+    rpc GetFilesList (Empty) returns (FilesListResponse) {}
+}
+
+message HelloRequest {
+    string name = 1;
+}
+
+message HelloResponse {
+    string message = 1;
+}
+
+message Empty {}
+
+message TimeResponse {
+    string timestamp = 1;
+}
+
+message FileRequest {
+    string filename = 1;
+    bytes content = 2;
+}
+
+message FileResponse {
+    bool success = 1;
+    string message = 2;
+    string file_path = 3;
+}
+
+message FilesListResponse {
+    repeated string filenames = 1;
+}
