@@ -1,168 +1,216 @@
-# gRPC Python Proof of Concept
+# gRPC Python Services Demo
 
-This project demonstrates a basic gRPC implementation in Python, featuring both unary calls and file operations. It includes a server that can handle basic greeting messages, provide server time, and manage file operations, along with a client that can interact with these services.
+This project demonstrates various gRPC implementations in Python, featuring both basic operations and streaming capabilities. It includes three separate services: a basic file service, a streaming service, and a random number service.
 
 ## Project Structure
 
 ```
-grpc_poc/
+grpc_project/
 ├── protos/
-│   └── service.proto      # Protocol Buffer service definitions
-├── service_pb2.py        # Generated Protocol Buffer code
-├── service_pb2_grpc.py   # Generated gRPC code
-├── server.py             # Server implementation
-├── client.py             # Client implementation
-└── requirements.txt      # Project dependencies
+│   ├── file_service.proto        # Basic file operations proto
+│   ├── random_service.proto      # Random number service proto
+│   └── streaming_service.proto   # Streaming operations proto
+├── file_client.py               # Basic file operations client
+├── file_server.py               # Basic file operations server
+├── streaming_client.py          # Streaming operations client
+├── streaming_server.py          # Streaming operations server
+├── random_client.py             # Random number client
+├── random_server.py             # Random number server
+├── requirements.txt
+├── uploaded_files/              # For basic file service
+└── streamed_files/              # For streaming service
 ```
 
 ## Features
 
-The PoC implements the following RPC methods:
+### 1. Basic File Service (Port 50051)
+- Simple greeting service
+- Get server time
+- Write files
+- List uploaded files
 
-1. **SayHello**
-   - Simple greeting service
-   - Takes a name as input and returns a greeting message
+### 2. Streaming Service (Port 50053)
+- Server streaming (continuous time updates)
+- Client streaming (chunked file upload)
+- Bidirectional streaming (chat system)
+  - Numbered client identifiers (Client(1), Client(2), etc.)
+  - Join/Leave notifications
+  - Real-time message broadcasting
 
-2. **GetServerTime**
-   - Returns the current server timestamp
-   - Demonstrates simple no-input RPC calls
-
-3. **WriteFile**
-   - Allows uploading files to the server
-   - Handles both text and binary files
-   - Includes safety features like filename sanitization
-   - Returns status, message, and file path
-
-4. **GetFilesList**
-   - Lists all files in the upload directory
-   - Demonstrates server-side directory operations
-
-## Protocol Buffer Definition
-
-The `service.proto` file defines the service interface using Protocol Buffers. Key message types include:
-
-- `HelloRequest/HelloReply`: For basic greeting service
-- `Empty`: For requests that don't need parameters
-- `TimeResponse`: For server time responses
-- `FileRequest`: Contains filename and file content
-- `FileResponse`: Contains operation status and details
-- `FilesListResponse`: Contains list of uploaded files
+### 3. Random Number Service (Port 50052)
+- Server streaming of random numbers
+- Configurable range and interval
+- Sequence tracking
 
 ## Setup Instructions
 
 1. **Install Dependencies**
-   ```bash
-   pip install grpcio grpcio-tools
-   ```
+```bash
+pip install grpcio grpcio-tools
+```
 
 2. **Generate gRPC Code**
-   ```bash
-   python -m grpc_tools.protoc -I./protos --python_out=. --grpc_python_out=. ./protos/service.proto
-   ```
-   This command generates:
-   - `service_pb2.py`: Contains Protocol Buffer message classes
-   - `service_pb2_grpc.py`: Contains gRPC service classes
+```bash
+# For file service
+python -m grpc_tools.protoc -I./protos --python_out=. --grpc_python_out=. ./protos/file_service.proto
 
-3. **Start the Server**
-   ```bash
-   python server.py
-   ```
-   The server will:
-   - Create an `uploaded_files` directory if it doesn't exist
-   - Listen on port 50051
-   - Handle incoming RPC requests
+# For streaming service
+python -m grpc_tools.protoc -I./protos --python_out=. --grpc_python_out=. ./protos/streaming_service.proto
 
-4. **Run the Client**
-   ```bash
-   python client.py
-   ```
+# For random number service
+python -m grpc_tools.protoc -I./protos --python_out=. --grpc_python_out=. ./protos/random_service.proto
+```
+
+## Running the Services
+
+### 1. Basic File Service
+```bash
+# Terminal 1 - Start server
+python file_server.py
+
+# Terminal 2 - Run client
+python file_client.py
+```
+
+### 2. Streaming Service
+```bash
+# Terminal 1 - Start server
+python streaming_server.py
+
+# Terminal 2+ - Run multiple clients
+python streaming_client.py
+```
+
+### 3. Random Number Service
+```bash
+# Terminal 1 - Start server
+python random_server.py
+
+# Terminal 2 - Run client
+python random_client.py
+```
+
+## Streaming Service Features in Detail
+
+### Server Streaming - Time Updates
+- Continuous server time updates
+- Press Ctrl+C to stop receiving updates
+```python
+# Example output
+Server time: 14:25:30.123
+Server time: 14:25:31.124
+Server time: 14:25:32.125
+```
+
+### Client Streaming - File Upload
+- Large file handling with chunked upload
+- Progress tracking
+- Automatic chunk size management (1MB chunks)
+```python
+# Example usage
+Enter file path to upload: example.txt
+Upload response: File example.txt uploaded successfully
+File path: streamed_files/example.txt
+```
+
+### Bidirectional Streaming - Chat System
+- Automatic client numbering
+- System notifications for client join/leave
+- Real-time message broadcasting
+
+Example chat session:
+```
+[14:30:00] Client(1) has joined the chat
+[14:30:05] Client(2) has joined the chat
+[14:30:10] Client(1): Hello everyone!
+[14:30:15] Client(2): Hi there!
+[14:30:20] Client(1) has left the chat
+```
+
+Features:
+- Each client gets a unique identifier (Client(1), Client(2), etc.)
+- System messages for client join/leave events
+- Timestamp for each message
+- Clean disconnection handling
+- Thread-safe message broadcasting
 
 ## Implementation Details
 
-### Server (`server.py`)
+### Server-side Features
+- Thread-safe client management
+- Proper message queuing
+- Clean disconnection handling
+- Automatic client numbering
+- System message broadcasting
 
-The server implements the `FileServicer` class which provides:
-
-1. **Initialization**
-   - Creates upload directory
-   - Sets up gRPC server with thread pool
-
-2. **Service Methods**
-   - `SayHello`: Simple greeting implementation
-   - `GetServerTime`: Returns formatted current time
-   - `WriteFile`: 
-     - Handles file writing operations
-     - Includes safety checks
-     - Provides detailed operation status
-   - `GetFilesList`: Directory listing implementation
-
-3. **Safety Features**
-   - Filename sanitization to prevent directory traversal
-   - Exception handling for all operations
-   - Dedicated upload directory
-   - Thread-safe file operations
-
-### Client (`client.py`)
-
-The client demonstrates:
-
-1. **Connection Management**
-   - Uses context manager for channel handling
-   - Connects to localhost:50051
-
-2. **Service Calls**
-   - Shows how to call each service method
-   - Handles responses and prints results
-   - Demonstrates different parameter types
-
-3. **File Operations**
-   - Shows how to send file content
-   - Handles both text and binary data
-   - Processes operation responses
-
-## Security Considerations
-
-1. **File Operations**
-   - Filename sanitization prevents directory traversal attacks
-   - Dedicated upload directory contains file operations
-   - Error handling prevents information leakage
-
-2. **Network Security**
-   - Uses insecure channel for demonstration
-   - Should be upgraded to secure channel (TLS) for production
+### Client-side Features
+- Interactive command interface
+- Proper error handling
+- Clean shutdown process
+- Separate threads for sending/receiving messages
+- Format-friendly message display
 
 ## Error Handling
 
-- Server-side error handling with proper gRPC status codes
-- Client receives detailed error messages
-- File operation failures are properly reported
-- Network errors are caught and handled
+The services handle various error scenarios:
+- Network disconnections
+- Invalid file paths
+- Server unavailability
+- Client disconnections
+- Thread interruptions
 
-## Usage Examples
+## Usage Notes
 
-### Basic Greeting
-```python
-# Client code
-response = stub.SayHello(service_pb2.HelloRequest(name="User"))
-print(response.message)
+1. **Starting Multiple Chat Clients**
+   - Each new client automatically gets the next available number
+   - Clients are notified when others join or leave
+   - Messages show client numbers for easy identification
+
+2. **File Operations**
+   - Basic service: Single file upload
+   - Streaming service: Chunked file upload for large files
+   - Separate directories for each service
+
+3. **Time Updates**
+   - Basic service: Single time request
+   - Streaming service: Continuous updates
+
+## Common Use Cases
+
+1. **File Transfer**
+   - Large file uploads
+   - Progress monitoring
+   - File listing and management
+
+2. **Real-time Updates**
+   - Server time synchronization
+   - Continuous data streaming
+   - Event notifications
+
+3. **Chat System**
+   - Team communication
+   - System notifications
+   - Multi-client interaction
+
+## Testing the Services
+
+1. **Basic Operations**
+```bash
+python file_client.py
+# Follow the prompts for basic operations
 ```
 
-### File Upload
-```python
-# Client code
-with open('myfile.txt', 'rb') as f:
-    content = f.read()
-    request = service_pb2.FileRequest(
-        filename="myfile.txt",
-        content=content
-    )
-    response = stub.WriteFile(request)
+2. **Streaming Chat**
+```bash
+# Start multiple instances:
+python streaming_client.py
+# Skip time updates with Ctrl+C
+# Skip file upload with Enter
+# Start chatting with automatically assigned client numbers
 ```
 
-### List Files
-```python
-# Client code
-response = stub.GetFilesList(service_pb2.Empty())
-for filename in response.filenames:
-    print(filename)
+3. **Random Numbers**
+```bash
+python random_client.py
+# Follow the prompts to configure random number generation
 ```

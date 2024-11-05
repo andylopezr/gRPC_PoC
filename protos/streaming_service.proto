@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package streaming;
+
+service StreamingService {
+    rpc StreamServerTime (Empty) returns (stream TimeResponse) {}
+    rpc StreamUploadFile (stream FileChunk) returns (FileResponse) {}
+    rpc ChatStream (stream ChatMessage) returns (stream ChatMessage) {}
+}
+
+message Empty {}
+
+message TimeResponse {
+    string timestamp = 1;
+}
+
+message FileChunk {
+    string filename = 1;
+    bytes chunk_data = 2;
+    bool is_last_chunk = 3;
+}
+
+message FileResponse {
+    bool success = 1;
+    string message = 2;
+    string file_path = 3;
+}
+
+message ChatMessage {
+    string sender = 1;
+    string message = 2;
+    string timestamp = 3;
+}

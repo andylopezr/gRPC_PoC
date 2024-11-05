@@ -1,10 +1,9 @@
 syntax = "proto3";
 
-package example;
+package file;
 
 service FileService {
-    // methods that can be called remotely
-    rpc SayHello (HelloRequest) returns (HelloReply) {}
+    rpc SayHello (HelloRequest) returns (HelloResponse) {}
     rpc GetServerTime (Empty) returns (TimeResponse) {}
     rpc WriteFile (FileRequest) returns (FileResponse) {}
     rpc GetFilesList (Empty) returns (FilesListResponse) {}
@@ -14,7 +13,7 @@ message HelloRequest {
     string name = 1;
 }
 
-message HelloReply {
+message HelloResponse {
     string message = 1;
 }
 
