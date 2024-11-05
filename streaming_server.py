@@ -17,7 +17,7 @@ class StreamingServicer(streaming_service_pb2_grpc.StreamingServiceServicer):
         os.makedirs(UPLOAD_DIR, exist_ok=True)
         self.client_queues = {}
         self.client_queues_lock = threading.Lock()
-        self.client_counter = 0  # Counter for client numbering
+        self.client_counter = 0  
 
     def get_next_client_number(self):
         with self.client_queues_lock:
