@@ -5,7 +5,7 @@ import warnings
 
 import file_service_pb2 as file__service__pb2
 
-GRPC_GENERATED_VERSION = '1.67.0'
+GRPC_GENERATED_VERSION = '1.68.1'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
@@ -49,6 +49,16 @@ class FileServiceStub(object):
                 request_serializer=file__service__pb2.FileRequest.SerializeToString,
                 response_deserializer=file__service__pb2.FileResponse.FromString,
                 _registered_method=True)
+        self.ReadFile = channel.unary_unary(
+                '/file.FileService/ReadFile',
+                request_serializer=file__service__pb2.FileRequest.SerializeToString,
+                response_deserializer=file__service__pb2.FileContentResponse.FromString,
+                _registered_method=True)
+        self.DeleteFile = channel.unary_unary(
+                '/file.FileService/DeleteFile',
+                request_serializer=file__service__pb2.FileRequest.SerializeToString,
+                response_deserializer=file__service__pb2.FileResponse.FromString,
+                _registered_method=True)
         self.GetFilesList = channel.unary_unary(
                 '/file.FileService/GetFilesList',
                 request_serializer=file__service__pb2.Empty.SerializeToString,
@@ -77,6 +87,18 @@ class FileServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ReadFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetFilesList(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -98,6 +120,16 @@ def add_FileServiceServicer_to_server(servicer, server):
             ),
             'WriteFile': grpc.unary_unary_rpc_method_handler(
                     servicer.WriteFile,
+                    request_deserializer=file__service__pb2.FileRequest.FromString,
+                    response_serializer=file__service__pb2.FileResponse.SerializeToString,
+            ),
+            'ReadFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ReadFile,
+                    request_deserializer=file__service__pb2.FileRequest.FromString,
+                    response_serializer=file__service__pb2.FileContentResponse.SerializeToString,
+            ),
+            'DeleteFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteFile,
                     request_deserializer=file__service__pb2.FileRequest.FromString,
                     response_serializer=file__service__pb2.FileResponse.SerializeToString,
             ),
@@ -186,6 +218,60 @@ class FileService(object):
             request,
             target,
             '/file.FileService/WriteFile',
+            file__service__pb2.FileRequest.SerializeToString,
+            file__service__pb2.FileResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ReadFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/file.FileService/ReadFile',
+            file__service__pb2.FileRequest.SerializeToString,
+            file__service__pb2.FileContentResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/file.FileService/DeleteFile',
             file__service__pb2.FileRequest.SerializeToString,
             file__service__pb2.FileResponse.FromString,
             options,

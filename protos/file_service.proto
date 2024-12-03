@@ -6,6 +6,8 @@ service FileService {
     rpc SayHello (HelloRequest) returns (HelloResponse) {}
     rpc GetServerTime (Empty) returns (TimeResponse) {}
     rpc WriteFile (FileRequest) returns (FileResponse) {}
+    rpc ReadFile (FileRequest) returns (FileContentResponse) {}
+    rpc DeleteFile (FileRequest) returns (FileResponse) {}
     rpc GetFilesList (Empty) returns (FilesListResponse) {}
 }
 
@@ -32,8 +34,24 @@ message FileResponse {
     bool success = 1;
     string message = 2;
     string file_path = 3;
+    int64 file_size = 4;
+    string md5_hash = 5;
+}
+
+message FileContentResponse {
+    bool success = 1;
+    bytes content = 2;
+    string message = 3;
+}
+
+message FileInfo {
+    string filename = 1;
+    int64 size = 2;
+    string created_at = 3;
+    string modified_at = 4;
+    string md5_hash = 5;
 }
 
 message FilesListResponse {
-    repeated string filenames = 1;
+    repeated FileInfo files = 1;
 }

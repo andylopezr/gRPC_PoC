@@ -4,6 +4,10 @@ import file_service_pb2
 import file_service_pb2_grpc
 from datetime import datetime
 import os
+import hashlib
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
 UPLOAD_DIR = "uploaded_files"
 
@@ -27,10 +31,15 @@ class FileServicer(file_service_pb2_grpc.FileServiceServicer):
             with open(file_path, 'wb') as f:
                 f.write(request.content)
             
+            # Calculate MD5 hash
+            md5_hash = hashlib.md5(request.content).hexdigest()
+            
             return file_service_pb2.FileResponse(
                 success=True,
                 message=f"File {filename} written successfully",
-                file_path=file_path
+                file_path=file_path,
+                file_size=len(request.content),
+                md5_hash=md5_hash
             )
         except Exception as e:
             context.set_code(grpc.StatusCode.INTERNAL)
@@ -38,17 +47,93 @@ class FileServicer(file_service_pb2_grpc.FileServiceServicer):
             return file_service_pb2.FileResponse(
                 success=False,
                 message=f"Error writing file: {str(e)}",
+                file_path="",
+                file_size=0,
+                md5_hash=""
+            )
+    
+    def ReadFile(self, request, context):
+        try:
+            filename = os.path.basename(request.filename)
+            file_path = os.path.join(UPLOAD_DIR, filename)
+            
+            if not os.path.exists(file_path):
+                context.set_code(grpc.StatusCode.NOT_FOUND)
+                context.set_details(f"File {filename} not found")
+                return file_service_pb2.FileContentResponse(
+                    success=False,
+                    content=b"",
+                    message=f"File {filename} not found"
+                )
+            
+            with open(file_path, 'rb') as f:
+                content = f.read()
+            
+            return file_service_pb2.FileContentResponse(
+                success=True,
+                content=content,
+                message=f"File {filename} read successfully"
+            )
+        except Exception as e:
+            context.set_code(grpc.StatusCode.INTERNAL)
+            context.set_details(str(e))
+            return file_service_pb2.FileContentResponse(
+                success=False,
+                content=b"",
+                message=f"Error reading file: {str(e)}"
+            )
+    
+    def DeleteFile(self, request, context):
+        try:
+            filename = os.path.basename(request.filename)
+            file_path = os.path.join(UPLOAD_DIR, filename)
+            
+            if not os.path.exists(file_path):
+                context.set_code(grpc.StatusCode.NOT_FOUND)
+                context.set_details(f"File {filename} not found")
+                return file_service_pb2.FileResponse(
+                    success=False,
+                    message=f"File {filename} not found",
+                    file_path=""
+                )
+            
+            os.remove(file_path)
+            return file_service_pb2.FileResponse(
+                success=True,
+                message=f"File {filename} deleted successfully",
+                file_path=file_path
+            )
+        except Exception as e:
+            context.set_code(grpc.StatusCode.INTERNAL)
+            context.set_details(str(e))
+            return file_service_pb2.FileResponse(
+                success=False,
+                message=f"Error deleting file: {str(e)}",
                 file_path=""
             )
     
     def GetFilesList(self, request, context):
         try:
-            files = os.listdir(UPLOAD_DIR)
-            return file_service_pb2.FilesListResponse(filenames=files)
+            files = []
+            for filename in os.listdir(UPLOAD_DIR):
+                file_path = os.path.join(UPLOAD_DIR, filename)
+                file_stat = os.stat(file_path)
+                with open(file_path, 'rb') as f:
+                    content = f.read()
+                    md5_hash = hashlib.md5(content).hexdigest()
+                
+                files.append(file_service_pb2.FileInfo(
+                    filename=filename,
+                    size=file_stat.st_size,
+                    created_at=datetime.fromtimestamp(file_stat.st_ctime).strftime("%Y-%m-%d %H:%M:%S"),
+                    modified_at=datetime.fromtimestamp(file_stat.st_mtime).strftime("%Y-%m-%d %H:%M:%S"),
+                    md5_hash=md5_hash
+                ))
+            return file_service_pb2.FilesListResponse(files=files)
         except Exception as e:
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(str(e))
-            return file_service_pb2.FilesListResponse(filenames=[])
+            return file_service_pb2.FilesListResponse(files=[])
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
