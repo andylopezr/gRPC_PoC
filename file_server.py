@@ -123,14 +123,14 @@ class FileServicer(file_service_pb2_grpc.FileServiceServicer):
                 file_stat = os.stat(file_path)
                 with open(file_path, 'rb') as f:
                     content = f.read()
-                    hash = hashlib.sha256(content).hexdigest()
+                    file_hash = hashlib.sha256(content).hexdigest()
                 
                 files.append(file_service_pb2.FileInfo(
                     filename=filename,
                     size=file_stat.st_size,
                     created_at=datetime.fromtimestamp(file_stat.st_ctime).strftime("%Y-%m-%d %H:%M:%S"),
                     modified_at=datetime.fromtimestamp(file_stat.st_mtime).strftime("%Y-%m-%d %H:%M:%S"),
-                    hash=hash 
+                    hash=file_hash 
                 ))
             return file_service_pb2.FilesListResponse(files=files)
         except Exception as e:
