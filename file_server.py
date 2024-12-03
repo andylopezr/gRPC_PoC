@@ -23,6 +23,9 @@ class FileServicer(file_service_pb2_grpc.FileServiceServicer):
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         return file_service_pb2.TimeResponse(timestamp=current_time)
     
+    def _compute_file_hash(self, content):
+        return hashlib.sha256(content).hexdigest()
+    
     def WriteFile(self, request, context):
         try:
             filename = os.path.basename(request.filename)
@@ -31,16 +34,16 @@ class FileServicer(file_service_pb2_grpc.FileServiceServicer):
             with open(file_path, 'wb') as f:
                 f.write(request.content)
             
-            # Calculate MD5 hash
-            md5_hash = hashlib.md5(request.content).hexdigest()
-            
+            file_hash = self._compute_file_hash(request.content)
+
             return file_service_pb2.FileResponse(
                 success=True,
                 message=f"File {filename} written successfully",
                 file_path=file_path,
                 file_size=len(request.content),
-                md5_hash=md5_hash
+                hash=file_hash 
             )
+        
         except Exception as e:
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(str(e))
@@ -49,7 +52,7 @@ class FileServicer(file_service_pb2_grpc.FileServiceServicer):
                 message=f"Error writing file: {str(e)}",
                 file_path="",
                 file_size=0,
-                md5_hash=""
+                hash=""
             )
     
     def ReadFile(self, request, context):
@@ -120,14 +123,14 @@ class FileServicer(file_service_pb2_grpc.FileServiceServicer):
                 file_stat = os.stat(file_path)
                 with open(file_path, 'rb') as f:
                     content = f.read()
-                    md5_hash = hashlib.md5(content).hexdigest()
+                    hash = hashlib.sha256(content).hexdigest()
                 
                 files.append(file_service_pb2.FileInfo(
                     filename=filename,
                     size=file_stat.st_size,
                     created_at=datetime.fromtimestamp(file_stat.st_ctime).strftime("%Y-%m-%d %H:%M:%S"),
                     modified_at=datetime.fromtimestamp(file_stat.st_mtime).strftime("%Y-%m-%d %H:%M:%S"),
-                    md5_hash=md5_hash
+                    hash=hash 
                 ))
             return file_service_pb2.FilesListResponse(files=files)
         except Exception as e:

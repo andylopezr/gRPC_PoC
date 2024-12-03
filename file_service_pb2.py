@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12\x66ile_service.proto\x12\x04\x66ile\"\x1c\n\x0cHelloRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\" \n\rHelloResponse\x12\x0f\n\x07message\x18\x01 \x01(\t\"\x07\n\x05\x45mpty\"!\n\x0cTimeResponse\x12\x11\n\ttimestamp\x18\x01 \x01(\t\"0\n\x0b\x46ileRequest\x12\x10\n\x08\x66ilename\x18\x01 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\x0c\"h\n\x0c\x46ileResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x11\n\tfile_path\x18\x03 \x01(\t\x12\x11\n\tfile_size\x18\x04 \x01(\x03\x12\x10\n\x08md5_hash\x18\x05 \x01(\t\"H\n\x13\x46ileContentResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\x0c\x12\x0f\n\x07message\x18\x03 \x01(\t\"e\n\x08\x46ileInfo\x12\x10\n\x08\x66ilename\x18\x01 \x01(\t\x12\x0c\n\x04size\x18\x02 \x01(\x03\x12\x12\n\ncreated_at\x18\x03 \x01(\t\x12\x13\n\x0bmodified_at\x18\x04 \x01(\t\x12\x10\n\x08md5_hash\x18\x05 \x01(\t\"2\n\x11\x46ilesListResponse\x12\x1d\n\x05\x66iles\x18\x01 \x03(\x0b\x32\x0e.file.FileInfo2\xd9\x02\n\x0b\x46ileService\x12\x35\n\x08SayHello\x12\x12.file.HelloRequest\x1a\x13.file.HelloResponse\"\x00\x12\x32\n\rGetServerTime\x12\x0b.file.Empty\x1a\x12.file.TimeResponse\"\x00\x12\x34\n\tWriteFile\x12\x11.file.FileRequest\x1a\x12.file.FileResponse\"\x00\x12:\n\x08ReadFile\x12\x11.file.FileRequest\x1a\x19.file.FileContentResponse\"\x00\x12\x35\n\nDeleteFile\x12\x11.file.FileRequest\x1a\x12.file.FileResponse\"\x00\x12\x36\n\x0cGetFilesList\x12\x0b.file.Empty\x1a\x17.file.FilesListResponse\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12\x66ile_service.proto\x12\x04\x66ile\"\x1c\n\x0cHelloRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\" \n\rHelloResponse\x12\x0f\n\x07message\x18\x01 \x01(\t\"\x07\n\x05\x45mpty\"!\n\x0cTimeResponse\x12\x11\n\ttimestamp\x18\x01 \x01(\t\"0\n\x0b\x46ileRequest\x12\x10\n\x08\x66ilename\x18\x01 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\x0c\"d\n\x0c\x46ileResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x11\n\tfile_path\x18\x03 \x01(\t\x12\x11\n\tfile_size\x18\x04 \x01(\x03\x12\x0c\n\x04hash\x18\x05 \x01(\t\"H\n\x13\x46ileContentResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\x0c\x12\x0f\n\x07message\x18\x03 \x01(\t\"a\n\x08\x46ileInfo\x12\x10\n\x08\x66ilename\x18\x01 \x01(\t\x12\x0c\n\x04size\x18\x02 \x01(\x03\x12\x12\n\ncreated_at\x18\x03 \x01(\t\x12\x13\n\x0bmodified_at\x18\x04 \x01(\t\x12\x0c\n\x04hash\x18\x05 \x01(\t\"2\n\x11\x46ilesListResponse\x12\x1d\n\x05\x66iles\x18\x01 \x03(\x0b\x32\x0e.file.FileInfo2\xd9\x02\n\x0b\x46ileService\x12\x35\n\x08SayHello\x12\x12.file.HelloRequest\x1a\x13.file.HelloResponse\"\x00\x12\x32\n\rGetServerTime\x12\x0b.file.Empty\x1a\x12.file.TimeResponse\"\x00\x12\x34\n\tWriteFile\x12\x11.file.FileRequest\x1a\x12.file.FileResponse\"\x00\x12:\n\x08ReadFile\x12\x11.file.FileRequest\x1a\x19.file.FileContentResponse\"\x00\x12\x35\n\nDeleteFile\x12\x11.file.FileRequest\x1a\x12.file.FileResponse\"\x00\x12\x36\n\x0cGetFilesList\x12\x0b.file.Empty\x1a\x17.file.FilesListResponse\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -42,13 +42,13 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_FILEREQUEST']._serialized_start=136
   _globals['_FILEREQUEST']._serialized_end=184
   _globals['_FILERESPONSE']._serialized_start=186
-  _globals['_FILERESPONSE']._serialized_end=290
-  _globals['_FILECONTENTRESPONSE']._serialized_start=292
-  _globals['_FILECONTENTRESPONSE']._serialized_end=364
-  _globals['_FILEINFO']._serialized_start=366
-  _globals['_FILEINFO']._serialized_end=467
-  _globals['_FILESLISTRESPONSE']._serialized_start=469
-  _globals['_FILESLISTRESPONSE']._serialized_end=519
-  _globals['_FILESERVICE']._serialized_start=522
-  _globals['_FILESERVICE']._serialized_end=867
+  _globals['_FILERESPONSE']._serialized_end=286
+  _globals['_FILECONTENTRESPONSE']._serialized_start=288
+  _globals['_FILECONTENTRESPONSE']._serialized_end=360
+  _globals['_FILEINFO']._serialized_start=362
+  _globals['_FILEINFO']._serialized_end=459
+  _globals['_FILESLISTRESPONSE']._serialized_start=461
+  _globals['_FILESLISTRESPONSE']._serialized_end=511
+  _globals['_FILESERVICE']._serialized_start=514
+  _globals['_FILESERVICE']._serialized_end=859
 # @@protoc_insertion_point(module_scope)

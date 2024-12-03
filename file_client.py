@@ -2,7 +2,6 @@ import grpc
 import file_service_pb2
 import file_service_pb2_grpc
 import os
-from datetime import datetime
 
 class FileClient:
     def __init__(self, host='localhost', port=50051):
@@ -56,7 +55,7 @@ class FileClient:
                     print(f"Upload response: {response.message}")
                     if response.success:
                         print(f"File size: {response.file_size} bytes")
-                        print(f"MD5 hash: {response.md5_hash}")
+                        print(f"Hash: {response.hash}")
                 
                 elif choice == '4':
                     filename = input("Enter filename to download: ")
@@ -80,11 +79,11 @@ class FileClient:
                         
                     print("\nFiles on server:")
                     print("-" * 80)
-                    print(f"{'Filename':<30} {'Size':<10} {'Created':<20} {'MD5 Hash'}")
+                    print(f"{'Filename':<30} {'Size':<10} {'Created':<20} {'Hash'}")
                     print("-" * 80)
                     
                     for file_info in response.files:
-                        print(f"{file_info.filename:<30} {file_info.size:<10} {file_info.created_at:<20} {file_info.md5_hash}")
+                        print(f"{file_info.filename:<30} {file_info.size:<10} {file_info.created_at:<20} {file_info.hash}")
                 
                 elif choice == '6':
                     filename = input("Enter filename to delete: ")
