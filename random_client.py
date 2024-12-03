@@ -45,7 +45,7 @@ def run_client():
             stream_random_numbers(stub, min_val, max_val, count, delay)
             
         except ValueError as e:
-            print("Please enter valid numbers!")
+            print(f"ValueError occurred: {e}")
         except KeyboardInterrupt:
             print("\nClient terminated by user")
 
