@@ -1,24 +1,30 @@
 # gRPC Python Services Demo
 
-This project demonstrates various gRPC implementations in Python, featuring both basic operations and streaming capabilities. It includes three separate services: a basic file service, a streaming service, and a random number service.
+This project demonstrates various gRPC implementations in Python, featuring both basic operations and streaming capabilities. It includes multiple services with a new **SRP (Single Responsibility Principle)** example for authentication and logging.
 
 ## Project Structure
 
 ```
 grpc_project/
 ├── protos/
-│   ├── file_service.proto        # Basic file operations proto
-│   ├── random_service.proto      # Random number service proto
-│   └── streaming_service.proto   # Streaming operations proto
-├── file_client.py               # Basic file operations client
-├── file_server.py               # Basic file operations server
-├── streaming_client.py          # Streaming operations client
-├── streaming_server.py          # Streaming operations server
-├── random_client.py             # Random number client
-├── random_server.py             # Random number server
+│ ├── file_service.proto # Basic file operations proto
+│ ├── random_service.proto # Random number service proto
+│ ├── streaming_service.proto # Streaming operations proto
+│ ├── auth_service.proto # New: Authentication service proto
+│ └── logger_service.proto # New: Logging service proto
+├── file_client.py # Basic file operations client
+├── file_server.py # Basic file operations server
+├── streaming_client.py # Streaming operations client
+├── streaming_server.py # Streaming operations server
+├── random_client.py # Random number client
+├── random_server.py # Random number server
+├── auth_server.py # New: Auth service server
+├── auth_client.py # New: Auth service client
+├── logger_server.py # New: Logger service server
+├── logger_client.py # New: Logger service client
 ├── requirements.txt
-├── uploaded_files/              # For basic file service
-└── streamed_files/              # For streaming service
+├── uploaded_files/ # For basic file service
+└── streamed_files/ # For streaming service
 ```
 
 ## Features
@@ -42,6 +48,13 @@ grpc_project/
 - Configurable range and interval
 - Sequence tracking
 
+### 4. SRP Example: Authentication & Logging (Ports 50054/50055) [NEW]
+- **AuthService**: Dedicated to user authentication (login/logout)
+- **LoggerService**: Dedicated to activity logging
+- Demonstrates Single Responsibility Principle:
+  - AuthService changes only for authentication rules
+  - LoggerService changes only for logging formats/storage
+
 ## Setup Instructions
 
 1. **Install Dependencies**
@@ -59,6 +72,10 @@ python -m grpc_tools.protoc -I./protos --python_out=. --grpc_python_out=. ./prot
 
 # For random number service
 python -m grpc_tools.protoc -I./protos --python_out=. --grpc_python_out=. ./protos/random_service.proto
+
+# For new SRP example services
+python -m grpc_tools.protoc -I./protos --python_out=. --grpc_python_out=. ./protos/auth_service.proto
+python -m grpc_tools.protoc -I./protos --python_out=. --grpc_python_out=. ./protos/logger_service.proto
 ```
 
 ## Running the Services
@@ -88,6 +105,23 @@ python random_server.py
 
 # Terminal 2 - Run client
 python random_client.py
+```
+
+### 4. SRP Example: Auth & Logging Services [NEW]
+```bash
+# Terminal 1 - Auth Service (Port 50054)
+python auth_server.py
+
+# Terminal 2 - Logger Service (Port 50055)
+python logger_server.py
+
+# Terminal 3 - Test Auth Client
+python auth_client.py
+# Expected output: "Auth Response: Logged in as user1"
+
+# Terminal 4 - Test Logger Client
+python logger_client.py
+# Expected output: "Logging succeeded: True"
 ```
 
 ## Streaming Service Features in Detail
@@ -153,11 +187,51 @@ Features:
 ## Error Handling
 
 The services handle various error scenarios:
-- Network disconnections
-- Invalid file paths
-- Server unavailability
-- Client disconnections
-- Thread interruptions
+   - Network disconnections
+   - Invalid file paths
+   - Server unavailability
+   - Client disconnections
+   - Thread interruptions
+
+## SRP Example Features in Detail
+
+### Authentication Service (AuthService)
+
+Login/Logout Workflows:
+   - Simple username/password authentication
+   - Session ID management
+   - Clean separation from logging logic
+
+Example auth flow:
+```
+# auth_client.py output
+Auth Response: Logged in as user1
+```
+
+### Logging Service (LoggerService)
+
+Activity Tracking:
+   - Event-type categorization (e.g., AUTH_EVENT, SYSTEM_EVENT)
+   - Decoupled from authentication logic
+   - Console logging (easily extendable to files/databases)
+
+Example log entry on server:
+```
+[LOG] AUTH_EVENT: User 'user1' logged in
+```
+
+Interaction Diagram
+```
+Client → AuthService (Login) → LoggerService (Log event)
+│                                   ▲
+└───────────────────────────────────┘
+```
+
+Key characteristics:
+   - AuthService never handles logging directly
+   - LoggerService remains unaware of authentication rules
+   - Services can be scaled/replaced independently
+
 
 ## Usage Notes
 

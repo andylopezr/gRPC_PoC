@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+service LoggerService {
+  rpc LogActivity(LogRequest) returns (LogResponse);
+}
+
+message LogRequest {
+  string event_type = 1;
+  string details = 2;
+}
+
+message LogResponse {
+  bool logged = 1;
+}
