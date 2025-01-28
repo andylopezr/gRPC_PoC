@@ -17,4 +17,5 @@ message LogoutRequest {
 message AuthResponse {
   bool success = 1;
   string message = 2;
+  string session_id = 3;
 }

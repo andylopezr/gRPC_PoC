@@ -109,19 +109,16 @@ python random_client.py
 
 ### 4. SRP Example: Auth & Logging Services [NEW]
 ```bash
-# Terminal 1 - Auth Service (Port 50054)
-python auth_server.py
-
-# Terminal 2 - Logger Service (Port 50055)
+# Terminal 1 - Start Logger Service (Port 50055)
 python logger_server.py
 
-# Terminal 3 - Test Auth Client
-python auth_client.py
-# Expected output: "Auth Response: Logged in as user1"
+# Terminal 2 - Start Auth Service (Port 50054)
+python auth_server.py
 
-# Terminal 4 - Test Logger Client
-python logger_client.py
-# Expected output: "Logging succeeded: True"
+# Terminal 3 - Run Auth Client
+python auth_client.py
+# Expected output: "Login: Login successful (Session ID: [uuid])"
+# Press Ctrl+C to logout
 ```
 
 ## Streaming Service Features in Detail
@@ -197,41 +194,43 @@ The services handle various error scenarios:
 
 ### Authentication Service (AuthService)
 
-Login/Logout Workflows:
-   - Simple username/password authentication
-   - Session ID management
-   - Clean separation from logging logic
+The AuthService demonstrates the Single Responsibility Principle by focusing solely on authentication:
+   - User login/logout management
+   - Session tracking with UUIDs
+   - Clean separation from logging concerns
+   - Graceful shutdown with Ctrl+C handling
 
 Example auth flow:
 ```
-# auth_client.py output
-Auth Response: Logged in as user1
+# Terminal output when running auth_client.py
+Login: Login successful (Session ID: 550e8400-e29b-41d4-a716-446655440000)
+Session active. Press Ctrl+C to logout and exit.
+Received shutdown signal. Logging out...
+Logout: Logout successful
 ```
 
 ### Logging Service (LoggerService)
 
-Activity Tracking:
-   - Event-type categorization (e.g., AUTH_EVENT, SYSTEM_EVENT)
-   - Decoupled from authentication logic
-   - Console logging (easily extendable to files/databases)
+The LoggerService demonstrates SRP by handling only logging responsibilities:
+   - Event logging for system activities
+   - No authentication logic
+   - Easily extendable logging format
+   - Clear separation of concerns
 
-Example log entry on server:
+Example log entries:
 ```
-[LOG] AUTH_EVENT: User 'user1' logged in
-```
-
-Interaction Diagram
-```
-Client → AuthService (Login) → LoggerService (Log event)
-│                                   ▲
-└───────────────────────────────────┘
+# Logger server output
+[LOG] SESSION_STARTED: User 'user1' logged in
+[LOG] SESSION_TERMINATED: Session 550e8400-e29b-41d4-a716-446655440000 (user1) ended
 ```
 
-Key characteristics:
-   - AuthService never handles logging directly
-   - LoggerService remains unaware of authentication rules
-   - Services can be scaled/replaced independently
-
+### Interaction Flow
+```
+Auth Client → AuthService → LoggerService
+    │         (authentication)  (logging)
+    └─────────── Ctrl+C ─────────────────┘
+        (triggers logout & logging)
+```
 
 ## Usage Notes
 

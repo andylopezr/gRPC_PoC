@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12\x61uth_service.proto\"2\n\x0cLoginRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"#\n\rLogoutRequest\x12\x12\n\nsession_id\x18\x01 \x01(\t\"0\n\x0c\x41uthResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t2]\n\x0b\x41uthService\x12%\n\x05Login\x12\r.LoginRequest\x1a\r.AuthResponse\x12\'\n\x06Logout\x12\x0e.LogoutRequest\x1a\r.AuthResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12\x61uth_service.proto\"2\n\x0cLoginRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"#\n\rLogoutRequest\x12\x12\n\nsession_id\x18\x01 \x01(\t\"D\n\x0c\x41uthResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x12\n\nsession_id\x18\x03 \x01(\t2]\n\x0b\x41uthService\x12%\n\x05Login\x12\r.LoginRequest\x1a\r.AuthResponse\x12\'\n\x06Logout\x12\x0e.LogoutRequest\x1a\r.AuthResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -36,7 +36,7 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_LOGOUTREQUEST']._serialized_start=74
   _globals['_LOGOUTREQUEST']._serialized_end=109
   _globals['_AUTHRESPONSE']._serialized_start=111
-  _globals['_AUTHRESPONSE']._serialized_end=159
-  _globals['_AUTHSERVICE']._serialized_start=161
-  _globals['_AUTHSERVICE']._serialized_end=254
+  _globals['_AUTHRESPONSE']._serialized_end=179
+  _globals['_AUTHSERVICE']._serialized_start=181
+  _globals['_AUTHSERVICE']._serialized_end=274
 # @@protoc_insertion_point(module_scope)
