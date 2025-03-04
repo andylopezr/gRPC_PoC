@@ -27,15 +27,23 @@ grpc_project/
 └── streamed_files/ # For streaming service
 ```
 
+## Additional Dependencies
+
+```bash
+pip install tabulate
+```
+
 ## Features
 
 ### 1. Basic File Service (Port 50051)
+
 - Simple greeting service
 - Get server time
 - Write files
 - List uploaded files
 
 ### 2. Streaming Service (Port 50053)
+
 - Server streaming (continuous time updates)
 - Client streaming (chunked file upload)
 - Bidirectional streaming (chat system)
@@ -44,25 +52,78 @@ grpc_project/
   - Real-time message broadcasting
 
 ### 3. Random Number Service (Port 50052)
+
 - Server streaming of random numbers
 - Configurable range and interval
 - Sequence tracking
 
 ### 4. SRP Example: Authentication & Logging (Ports 50054/50055) [NEW]
+
 - **AuthService**: Dedicated to user authentication (login/logout)
 - **LoggerService**: Dedicated to activity logging
 - Demonstrates Single Responsibility Principle:
   - AuthService changes only for authentication rules
   - LoggerService changes only for logging formats/storage
 
+### Logging Service (LoggerService)
+
+The LoggerService demonstrates SRP by handling only logging responsibilities:
+
+- Event logging for system activities with persistent SQLite database storage
+- No authentication logic
+- Easily extendable logging format
+- Clear separation of concerns
+- Query capabilities for retrieving log history
+
+Example log entries:
+
+```bash
+[LOG] SESSION_STARTED: User 'user1' logged in [LOG] SESSION_TERMINATED: Session 550e8400-e29b-41d4-a716-446655440000 (user1) ended
+```
+
+### Database Features
+
+The LoggerService now includes a SQLite database implementation:
+
+- Logs are stored persistently in `logs.db`
+- Each log entry includes:
+  - ID (auto-incrementing)
+  - Event type
+  - Details
+  - Timestamp
+- Log records survive across server restarts
+
+### Query Tool
+
+A command-line query tool is available to search and display logs:
+
+```bash
+# View recent logs (default: 20 entries)
+python logger_query.py
+
+# Customize output
+python logger_query.py --limit 50
+python logger_query.py --type SESSION_STARTED
+python logger_query.py --db custom_logs.db
+```
+
+The query tool displays logs in a well-formatted table with:
+
+- ID
+- Event Type
+- Details
+- Timestamp
+
 ## Setup Instructions
 
 1. **Install Dependencies**
+
 ```bash
 pip install grpcio grpcio-tools
 ```
 
 2. **Generate gRPC Code**
+
 ```bash
 # For file service
 python -m grpc_tools.protoc -I./protos --python_out=. --grpc_python_out=. ./protos/file_service.proto
@@ -81,6 +142,7 @@ python -m grpc_tools.protoc -I./protos --python_out=. --grpc_python_out=. ./prot
 ## Running the Services
 
 ### 1. Basic File Service
+
 ```bash
 # Terminal 1 - Start server
 python file_server.py
@@ -90,6 +152,7 @@ python file_client.py
 ```
 
 ### 2. Streaming Service
+
 ```bash
 # Terminal 1 - Start server
 python streaming_server.py
@@ -99,6 +162,7 @@ python streaming_client.py
 ```
 
 ### 3. Random Number Service
+
 ```bash
 # Terminal 1 - Start server
 python random_server.py
@@ -108,6 +172,7 @@ python random_client.py
 ```
 
 ### 4. SRP Example: Auth & Logging Services [NEW]
+
 ```bash
 # Terminal 1 - Start Logger Service (Port 50055)
 python logger_server.py
@@ -124,8 +189,10 @@ python auth_client.py
 ## Streaming Service Features in Detail
 
 ### Server Streaming - Time Updates
+
 - Continuous server time updates
 - Press Ctrl+C to stop receiving updates
+
 ```python
 # Example output
 Server time: 14:25:30.123
@@ -134,9 +201,11 @@ Server time: 14:25:32.125
 ```
 
 ### Client Streaming - File Upload
+
 - Large file handling with chunked upload
 - Progress tracking
 - Automatic chunk size management (1MB chunks)
+
 ```python
 # Example usage
 Enter file path to upload: example.txt
@@ -145,11 +214,13 @@ File path: streamed_files/example.txt
 ```
 
 ### Bidirectional Streaming - Chat System
+
 - Automatic client numbering
 - System notifications for client join/leave
 - Real-time message broadcasting
 
 Example chat session:
+
 ```
 [14:30:00] Client(1) has joined the chat
 [14:30:05] Client(2) has joined the chat
@@ -159,6 +230,7 @@ Example chat session:
 ```
 
 Features:
+
 - Each client gets a unique identifier (Client(1), Client(2), etc.)
 - System messages for client join/leave events
 - Timestamp for each message
@@ -168,6 +240,7 @@ Features:
 ## Implementation Details
 
 ### Server-side Features
+
 - Thread-safe client management
 - Proper message queuing
 - Clean disconnection handling
@@ -175,6 +248,7 @@ Features:
 - System message broadcasting
 
 ### Client-side Features
+
 - Interactive command interface
 - Proper error handling
 - Clean shutdown process
@@ -184,23 +258,26 @@ Features:
 ## Error Handling
 
 The services handle various error scenarios:
-   - Network disconnections
-   - Invalid file paths
-   - Server unavailability
-   - Client disconnections
-   - Thread interruptions
+
+- Network disconnections
+- Invalid file paths
+- Server unavailability
+- Client disconnections
+- Thread interruptions
 
 ## SRP Example Features in Detail
 
 ### Authentication Service (AuthService)
 
 The AuthService demonstrates the Single Responsibility Principle by focusing solely on authentication:
-   - User login/logout management
-   - Session tracking with UUIDs
-   - Clean separation from logging concerns
-   - Graceful shutdown with Ctrl+C handling
+
+- User login/logout management
+- Session tracking with UUIDs
+- Clean separation from logging concerns
+- Graceful shutdown with Ctrl+C handling
 
 Example auth flow:
+
 ```
 # Terminal output when running auth_client.py
 Login: Login successful (Session ID: 550e8400-e29b-41d4-a716-446655440000)
@@ -212,12 +289,14 @@ Logout: Logout successful
 ### Logging Service (LoggerService)
 
 The LoggerService demonstrates SRP by handling only logging responsibilities:
-   - Event logging for system activities
-   - No authentication logic
-   - Easily extendable logging format
-   - Clear separation of concerns
+
+- Event logging for system activities
+- No authentication logic
+- Easily extendable logging format
+- Clear separation of concerns
 
 Example log entries:
+
 ```
 # Logger server output
 [LOG] SESSION_STARTED: User 'user1' logged in
@@ -225,6 +304,7 @@ Example log entries:
 ```
 
 ### Interaction Flow
+
 ```
 Auth Client → AuthService → LoggerService
     │         (authentication)  (logging)
@@ -235,11 +315,13 @@ Auth Client → AuthService → LoggerService
 ## Usage Notes
 
 1. **Starting Multiple Chat Clients**
+
    - Each new client automatically gets the next available number
    - Clients are notified when others join or leave
    - Messages show client numbers for easy identification
 
 2. **File Operations**
+
    - Basic service: Single file upload
    - Streaming service: Chunked file upload for large files
    - Separate directories for each service
@@ -251,11 +333,13 @@ Auth Client → AuthService → LoggerService
 ## Common Use Cases
 
 1. **File Transfer**
+
    - Large file uploads
    - Progress monitoring
    - File listing and management
 
 2. **Real-time Updates**
+
    - Server time synchronization
    - Continuous data streaming
    - Event notifications
@@ -268,12 +352,14 @@ Auth Client → AuthService → LoggerService
 ## Testing the Services
 
 1. **Basic Operations**
+
 ```bash
 python file_client.py
 # Follow the prompts for basic operations
 ```
 
 2. **Streaming Chat**
+
 ```bash
 # Start multiple instances:
 python streaming_client.py
@@ -283,6 +369,7 @@ python streaming_client.py
 ```
 
 3. **Random Numbers**
+
 ```bash
 python random_client.py
 # Follow the prompts to configure random number generation
