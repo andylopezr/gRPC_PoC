@@ -12,3 +12,34 @@ message LogRequest {
 message LogResponse {
   bool logged = 1;
 }
+
+service LoggerService {
+  rpc LogActivity(LogRequest) returns (LogResponse);
+  rpc QueryLogs(LogQueryRequest) returns (LogQueryResponse);
+}
+
+message LogRequest {
+  string event_type = 1;
+  string details = 2;
+}
+
+message LogResponse {
+  bool logged = 1;
+}
+
+// New messages for querying logs
+message LogQueryRequest {
+  int32 limit = 1;
+  string event_type = 2; // Optional filter
+}
+
+message LogEntry {
+  int32 id = 1;
+  string event_type = 2;
+  string details = 3;
+  string timestamp = 4;
+}
+
+message LogQueryResponse {
+  repeated LogEntry logs = 1;
+}

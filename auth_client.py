@@ -15,7 +15,7 @@ class AuthClient:
             username=username, 
             password=password
         ))
-        self.session_id = login_response.session_id
+        self.session_id = login_response.session_id.split('-')[-1]
         print(f"Login: {login_response.message} (Session ID: {login_response.session_id})")
         
     def logout(self):
@@ -47,8 +47,7 @@ def run():
         signal.pause()
         
     except KeyboardInterrupt:
-        # This block might not be reached due to signal handler,
-        # but keeping it as a fallback
+        # fallback
         client.cleanup(None, None)
 
 if __name__ == '__main__':
