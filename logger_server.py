@@ -6,7 +6,7 @@ import os
 from datetime import datetime
 
 class LoggerService(logger_service_pb2_grpc.LoggerServiceServicer):
-    def __init__(self, db_path="logs.db"):
+    def __init__(self, db_path="logs_data/logs.db"):
         # Ensure the database directory exists
         os.makedirs(os.path.dirname(db_path) if os.path.dirname(db_path) else '.', exist_ok=True)
         

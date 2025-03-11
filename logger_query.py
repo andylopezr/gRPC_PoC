@@ -2,7 +2,7 @@ import sqlite3
 import argparse
 from tabulate import tabulate 
 
-def query_logs(db_path="logs.db", limit=20, event_type=None):
+def query_logs(db_path="/logs_data/logs.db", limit=20, event_type=None):
     """Query logs from the database"""
     try:
         conn = sqlite3.connect(db_path)

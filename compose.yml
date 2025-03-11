@@ -1,0 +1,52 @@
+services:
+  file-service:
+    build: .
+    command: python file_server.py
+    ports:
+      - "50051:50051"
+    volumes:
+      - ./uploaded_files:/app/uploaded_files
+    networks:
+      - grpc_network
+
+  streaming-service:
+    build: .
+    command: python streaming_server.py
+    ports:
+      - "50053:50053"
+    volumes:
+      - ./streamed_files:/app/streamed_files
+    networks:
+      - grpc_network
+
+  random-service:
+    build: .
+    command: python random_server.py
+    ports:
+      - "50052:50052"
+    networks:
+      - grpc_network
+
+  logger-service:
+    build: .
+    command: python logger_server.py
+    ports:
+      - "50055:50055"
+    volumes:
+      - ./logs_data:/app/logs_data
+    networks:
+      - grpc_network
+
+  auth-service:
+    build: .
+    command: python auth_server.py
+    ports:
+      - "50054:50054"
+    networks:
+      - grpc_network
+    depends_on:
+      - logger-service
+
+networks:
+  grpc_network:
+    driver: bridge

@@ -2,6 +2,10 @@
 
 This project demonstrates various gRPC implementations in Python, featuring both basic operations and streaming capabilities. It includes multiple services with a new **SRP (Single Responsibility Principle)** example for authentication and logging.
 
+# Docker Implementation
+
+This project can be containerized using Docker for easy deployment and consistent execution across environments.
+
 ## Project Structure
 
 ```
@@ -22,9 +26,12 @@ grpc_project/
 ├── auth_client.py # New: Auth service client
 ├── logger_server.py # New: Logger service server
 ├── logger_client.py # New: Logger service client
-├── requirements.txt
-├── uploaded_files/ # For basic file service
-└── streamed_files/ # For streaming service
+├── logger_query.py # New: Log database query tool
+├── Dockerfile # For building service images
+├── docker-compose.yml # For orchestrating multiple services
+├── requirements.txt ├── uploaded_files/ # For basic file service
+├── streamed_files/ # For streaming service
+└── logs_data/ # For persistent database storage
 ```
 
 ## Additional Dependencies

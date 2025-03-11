@@ -7,7 +7,7 @@ import logger_service_pb2, logger_service_pb2_grpc
 class AuthService(auth_service_pb2_grpc.AuthServiceServicer):
     def __init__(self):
         # LoggerService client setup
-        self.logger_channel = grpc.insecure_channel('localhost:50055')
+        self.logger_channel = grpc.insecure_channel('logger-service:50055')
         self.logger_stub = logger_service_pb2_grpc.LoggerServiceStub(self.logger_channel)
         self.active_sessions = {}  # Simple session storage
 
@@ -50,8 +50,9 @@ class AuthService(auth_service_pb2_grpc.AuthServiceServicer):
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     auth_service_pb2_grpc.add_AuthServiceServicer_to_server(AuthService(), server)
-    server.add_insecure_port('[::]:50054')
+    server.add_insecure_port('[::]:50056') 
     server.start()
+    print("Auth server started on port 50056")
     server.wait_for_termination()
 
 if __name__ == '__main__':
